@@ -71,3 +71,10 @@ def cluster(k, X):
         cg_change = measure_change(cg_new, cg_prev)
         cg_prev = cg_new
     return cluster, cg_prev
+
+
+def predict(centroids, X_test):
+    distarray = []
+    for i in range(len(centroids)):
+        distarray.append(dist(X_test, centroids[i]))
+    return np.argmin(distarray)
