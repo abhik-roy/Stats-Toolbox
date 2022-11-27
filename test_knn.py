@@ -5,11 +5,11 @@ import numpy as np
 from matplotlib import pyplot as plt
 import pandas as pd
 
-df = pd.read_csv("Credit Card Customer Data.csv")
+df = pd.read_csv("../Credit Card Customer Data.csv")
 
 X = df.iloc[:, 1:].values
 
-cluster, centroids = K_Means.k_means(4, X)
+cluster, centroids = K_Means.cluster(4, X)
 
 print(centroids)
 
