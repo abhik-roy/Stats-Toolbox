@@ -3,6 +3,12 @@ import numpy as np
 from matplotlib import pyplot as plt
 import pandas as pd
 
+# euclidean distance
+
+
+def dist(a, b):
+    return np.sqrt(sum(np.square(a-b)))
+
 
 def init_centroids(k, X):
 
@@ -60,14 +66,8 @@ def cluster(k, X):
     cg_change = 100
     while cg_change > .001:
         cluster = assign_cluster(k, X, cg_prev)
-        #show_clusters(X, cluster, cg_prev)
+
         cg_new = compute_centroids(k, X, cluster)
         cg_change = measure_change(cg_new, cg_prev)
         cg_prev = cg_new
     return cluster, cg_prev
-
-# euclidean distance
-
-
-def dist(a, b):
-    return np.sqrt(sum(np.square(a-b)))
