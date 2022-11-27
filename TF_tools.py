@@ -1,4 +1,4 @@
-import nltk
+#import nltk
 from nltk.tokenize import word_tokenize
 import pandas as pd
 import numpy as np
