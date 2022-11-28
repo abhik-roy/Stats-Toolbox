@@ -40,6 +40,13 @@ logregmodel = LogisticRegression()
 logregmodel.fit(X_train, y_train, lr=0.01, epochs=100, batchsize=1000)
 y_pred = logregmodel.predict(X_test, y_test)
 
-print("Accuracy: ",logregmodel.accuracy(y_test, y_pred))
+print("Logistic Regression Accuracy: ",logregmodel.accuracy(y_test, y_pred))
+
+logregmodel_ada = LogisticRegression()
+
+logregmodel_ada.fit(X_train, y_train, useAdagrad=True, lr=0.01, epochs=100, batchsize=1000)
+y_pred = logregmodel_ada.predict(X_test, y_test)
+
+print("Logistic Regression Accuracy (with Adagrad): ",logregmodel_ada.accuracy(y_test, y_pred))
 
 run_sklearn_model()

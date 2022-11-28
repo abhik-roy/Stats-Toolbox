@@ -14,6 +14,11 @@ class LogisticRegression():
         
         return dw, db
 
+    def adagrad(self, lr, dw, adagradient):
+        adagradient += dw**2
+        step = lr / (np.sqrt(adagradient + 1e-6)) * dw
+        return step, adagradient
+
 
     def sigmoid(self, z):
         return 1.0/(1 + np.exp(-z))
@@ -31,8 +36,10 @@ class LogisticRegression():
         accuracy = np.sum(y == y_hat) / len(y)
         return accuracy
 
-    def fit(self, X, y, lr=0.1, epochs=10, batchsize=100):
+    def fit(self, X, y, useAdagrad=False, lr=0.1, epochs=10, batchsize=100):
         n = X.shape[0]
+        if useAdagrad:
+            adagradient = np.zeros((X.shape[1], 1))
         self.weights = np.zeros((X.shape[1], 1))
         losses = []
 
@@ -42,8 +49,12 @@ class LogisticRegression():
                 last_idx = first_idx + batchsize
                 xb, yb = X[first_idx:last_idx], y[first_idx:last_idx]
                 y_hat = self.h(xb)
-                dw, db = self.gradients(xb, yb, y_hat) # yhat is nan
-                self.weights = self.weights - lr*dw   
+                dw, db = self.gradients(xb, yb, y_hat)
+                if(not useAdagrad):
+                    self.weights = self.weights - lr*dw   
+                else:
+                    step, adagradient = self.adagrad(lr, dw, adagradient)
+                    self.weights = self.weights - step
                 self.bias = self.bias - lr*db
   
             l = self.get_cost(X, y)
