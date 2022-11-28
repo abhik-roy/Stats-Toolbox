@@ -23,8 +23,6 @@ class LogisticRegression():
         return 1.0/(1 + np.exp(-z))
 
     def h(self, x, beta, bias):
-        # print("aa", x[0])
-        # print((Utils.mxmult(x, beta)))
         return self.sigmoid(Utils.mxmult(x, beta) + bias)
 
     def get_cost(self, weights, bias):
@@ -55,23 +53,15 @@ class LogisticRegression():
                 dw, db = self.gradients(xb, yb, y_hat) # yhat is nan
                 w = w - lr*dw   
                 b = b - lr*db
-                
-            
+  
             l = self.get_cost(w, b)
             losses.append(l)
-            break
+            
 
-        # print("Losses: ", losses)
         return w, b, losses
     
     def predict(self, w, b):
-        X = self.X_test
-        preds = self.h(X, w, b)
-        
-        # Empty List to store predictions.
-        pred_class = []
-        # if y_hat >= 0.5 --> round up to 1
-        # if y_hat < 0.5 --> round up to 1
+        preds = self.h(self.X_test, w, b)
         pred_class = [1 if i > 0.5 else 0 for i in preds]
         
         return np.array(pred_class)
@@ -91,10 +81,11 @@ if __name__ == "__main__":
     # Data source: https://www.kaggle.com/code/dyasin/week24ml-weather-dataset-rattle-package-weatheraus/data 
     
     df = pd.read_csv("weatherAUS.csv")
-    df = df.iloc[:10]
+    df = df.iloc[:25000]
     y = pd.get_dummies(df.RainTomorrow, drop_first=True)
     y = y.values.reshape(-1,1)
-    # df = encode_categorical_vars(df)
+
+    # Drop categorical columns
     df.drop(['Date', 'Location', 'WindGustDir', 'WindDir9am', 'Evaporation', 'Sunshine', 'WindDir3pm', 'RainToday',  "RainTomorrow"],  axis=1, inplace=True)
     handle_nulls(df)
 
@@ -108,7 +99,7 @@ if __name__ == "__main__":
    
     logregmodel = LogisticRegression(X_train, X_test, y_train, y_test)
 
-    weights, bias, losses = logregmodel.fit(lr=0.01, epochs=10)
+    weights, bias, losses = logregmodel.fit(lr=0.01, epochs=10, batchsize=10000)
     y_pred = logregmodel.predict(weights, bias)
     
     print("Accuracy: ",logregmodel.accuracy(y_pred))

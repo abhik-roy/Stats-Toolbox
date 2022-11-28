@@ -17,13 +17,11 @@ class LinearRegression():
 
   # mean squared error
   def get_cost(self, weights):
-    return ( Utils.mxmult(Utils.transpose(self.h(weights)-self.y_train),(self.h(weights)-self.y_train)) )/(2*self.y_train.shape[0])
-
-    # n_rows =  (2*self.y_train.shape[0])
-    # error = self.h(weights)-self.y_train
-    # squared_error = Utils.mxmult(Utils.transpose(error), error)
-    # mean_squared_error = squared_error / n_rows
-    # return mean_squared_error
+    n_rows =  (2*self.y_train.shape[0])
+    error = self.h(weights)-self.y_train
+    squared_error = Utils.mxmult(Utils.transpose(error), error)
+    mean_squared_error = squared_error / n_rows
+    return mean_squared_error
 
 
   def gradient_descent(self, weights, lr=0.1, epochs=10):
@@ -37,8 +35,6 @@ class LinearRegression():
       weights = weights - (lr)*cost_
       costs.append(self.get_cost(weights))
 
-      
-
     return weights, costs 
 
   
@@ -46,10 +42,6 @@ class LinearRegression():
   def fit(self, lr=0.1, epochs=10):
     self.pad_1s_to_mx()
     weights = self.init_weights()
-
-    # for _ in range(epochs):
-    #   h_x = self.h(weights)
-
 
     weights, costs = self.gradient_descent(weights, lr, epochs)
     J = self.get_cost(weights)
@@ -65,8 +57,8 @@ class LinearRegression():
       x_0 = (x[0] - mu[0])/std[0]
       x_1 = (x[1] - mu[1])/std[1]
       y = weights[0] + weights[1]*x_0 + weights[2]*x_1
-    #   print("Predicted price of house: ", y)
-    #   print("Actual price of house: ", self.y_test[i])
+      print("Predicted price of house: ", y)
+      print("Actual price of house: ", self.y_test[i])
 
 
   def init_weights(self):
