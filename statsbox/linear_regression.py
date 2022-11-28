@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-
+from sklearn.metrics import mean_squared_error
 
 class LinearRegression():
   def __init__(self, X_train, X_test, y_train, y_test):
@@ -48,13 +48,17 @@ class LinearRegression():
   def predict(self):
     mu = np.mean(self.X_train[:,1:], axis=0)
     std = np.std(self.X_train[:,1:], axis=0)
+    expected = self.y_test
+    predicted = []
         
     for i,x in enumerate(self.X_test):
       x_0 = (x[0] - mu[0])/std[0]
       x_1 = (x[1] - mu[1])/std[1]
       y = self.weights[0] + self.weights[1]*x_0 + self.weights[2]*x_1
-      print("Predicted price of house: ", y)
-      print("Actual price of house: ", self.y_test[i])
+      predicted.append(y)
+    
+    return mean_squared_error(expected, predicted)
+     
 
 
   def init_weights(self):

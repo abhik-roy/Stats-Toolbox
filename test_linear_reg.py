@@ -27,4 +27,5 @@ linregmodel = LinearRegression(X_train, X_test, y_train, y_test)
 linregmodel.fit(lr=0.01, epochs=400)
 
 # predict
-linregmodel.predict()
+err = linregmodel.predict()
+print("Model Error: ", err)
