@@ -31,6 +31,15 @@ class LogisticRegression():
         return accuracy
 
     def fit(self, X, y, useAdagrad=False, lr=0.1, epochs=10, batchsize=100):
+        
+        if not isinstance(X, np.ndarray):
+            print(X.type())
+            print("incorrect input for X_train, must be a list")
+            return
+        if not isinstance(y, np.ndarray):
+            print("incorrect input for y_train, must be a list")
+            return
+
         n = X.shape[0]
         if useAdagrad:
             adagradient = np.zeros((X.shape[1], 1))
@@ -55,6 +64,13 @@ class LogisticRegression():
             losses.append(l)
 
     def predict(self, X):
+        
+        if not isinstance(X, np.ndarray):
+            print(X.type())
+            print("incorrect input for X_test, must be a list")
+            return
+        
+
         preds = self.h(X)
         pred_class = [1 if i > 0.5 else 0 for i in preds]
         return np.array(pred_class)
