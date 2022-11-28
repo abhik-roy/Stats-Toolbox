@@ -60,5 +60,6 @@ class LogisticRegression():
         return np.array(pred_class)
 
     def accuracy(self, actual, predicted):
-        accuracy = np.sum(actual[0] == predicted) / len(actual)
+        predicted = predicted.reshape(actual.shape[0],1)
+        accuracy = np.sum(actual == predicted) / len(actual)
         return accuracy
