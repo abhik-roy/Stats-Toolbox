@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
 
-from utils import Utils
 
 class LinearRegression():
   def __init__(self, X_train, X_test, y_train, y_test):
@@ -9,54 +8,51 @@ class LinearRegression():
     self.y_train = y_train
     self.X_test = X_test
     self.y_test = y_test
+    self.pad_1s_to_mx()
+
+    self.cost = 0
+    self.weights = self.init_weights()
     
 
-  def h(self, weights):
-    return Utils.mxmult(self.X_train, weights)
+  def h(self):
+    return np.dot(self.X_train, self.weights)
 
 
   # mean squared error
-  def get_cost(self, weights):
+  def get_cost(self):
     n_rows =  (2*self.y_train.shape[0])
-    error = self.h(weights)-self.y_train
-    squared_error = Utils.mxmult(Utils.transpose(error), error)
+    error = self.h()-self.y_train
+    squared_error = np.dot(error.T, error)
     mean_squared_error = squared_error / n_rows
     return mean_squared_error
 
 
-  def gradient_descent(self, weights, lr=0.1, epochs=10):
+  def gradient_descent(self, lr=0.1, epochs=10):
     
     costs = []
     n = self.X_train.shape[0]
     
     for _ in range(epochs):
-      h_x = self.h(weights)
-      cost_ = (1/n)*( Utils.mxmult(Utils.transpose(self.X_train), (h_x-self.y_train)) )
-      weights = weights - (lr)*cost_
-      costs.append(self.get_cost(weights))
+      h_x = self.h()
+      cost_ = (1/n)*(np.dot(self.X_train.T, (h_x-self.y_train)) )
+      self.weights = self.weights - (lr)*cost_
+      costs.append(self.get_cost())
 
-    return weights, costs 
-
-  
+    return costs 
  
   def fit(self, lr=0.1, epochs=10):
-    self.pad_1s_to_mx()
-    weights = self.init_weights()
+    costs = self.gradient_descent(lr, epochs)
+    self.cost = self.get_cost()
+    
 
-    weights, costs = self.gradient_descent(weights, lr, epochs)
-    J = self.get_cost(weights)
-    print("Cost: ", J)
-    print("Parameters: ", weights)
-    return J, weights
-
-  def predict(self, weights):
+  def predict(self):
     mu = np.mean(self.X_train[:,1:], axis=0)
     std = np.std(self.X_train[:,1:], axis=0)
         
     for i,x in enumerate(self.X_test):
       x_0 = (x[0] - mu[0])/std[0]
       x_1 = (x[1] - mu[1])/std[1]
-      y = weights[0] + weights[1]*x_0 + weights[2]*x_1
+      y = self.weights[0] + self.weights[1]*x_0 + self.weights[2]*x_1
       print("Predicted price of house: ", y)
       print("Actual price of house: ", self.y_test[i])
 
