@@ -6,6 +6,13 @@ from nltk.corpus import stopwords
 
 
 def get_word_set(corpus, return_value='list'):
+    if not isinstance(corpus, list):
+        print("corpus needs to be a list of strings")
+        return
+    if not isinstance(corpus[0], str):
+        print("corpus needs to be a list of strings")
+        return
+
     words_set = set()
     for doc in corpus:
         if isinstance(doc, str):
@@ -36,7 +43,12 @@ def create_lookup(corpus):
 
 
 def TF_matrix(corpus, words_set, return_type='list'):
-
+    if not isinstance(corpus, list):
+        print("corpus needs to be a list of strings")
+        return
+    if not isinstance(corpus[0], str):
+        print("corpus needs to be a list of strings")
+        return
     x = corpus
     n_docs = len(x)  # ·Number of documents in the corpus
     n_words_set = len(words_set)
@@ -72,6 +84,16 @@ def TF_matrix(corpus, words_set, return_type='list'):
 
 
 def get_IDF(corpus, words_set):
+    if not isinstance(corpus, list):
+        print("corpus needs to be a list of strings")
+        return
+    if not isinstance(corpus[0], str):
+        print("corpus needs to be a list of strings")
+        return
+    if not isinstance(words_set, set):
+        print("words_set needs to be a set of words")
+        return
+
     x = corpus
     n_docs = len(x)
     n_words_set = len(words_set)
@@ -87,6 +109,16 @@ def get_IDF(corpus, words_set):
 
 
 def TF_IDF(corpus, words_set, df_tf, df_type='list'):
+    if not isinstance(corpus, list):
+        print("corpus needs to be a list of strings")
+        return
+    if not isinstance(corpus[0], str):
+        print("corpus needs to be a list of strings")
+        return
+    if not isinstance(words_set, set):
+        print("words_set needs to be a set of words")
+        return
+
     x = corpus
     n_docs = len(x)
     n_words_set = len(words_set)
@@ -155,19 +187,39 @@ def fnorm(mat):
 
 
 def lowercase(corpus):
-    return np.char.lower(corpus)
+
+    if not isinstance(corpus, list):
+        print("corpus needs to be a list of strings")
+        return
+    if not isinstance(corpus[0], str):
+        print("corpus needs to be a list of strings")
+        return
+    return list(np.char.lower(corpus))
 
 
 def remove_punctuation(corpus):
+    if not isinstance(corpus, list):
+        print("corpus needs to be a list of strings")
+        return
+    if not isinstance(corpus[0], str):
+        print("corpus needs to be a list of strings")
+        return
+
     symbols = ",!\"#$%&()*+-./:;<=>?@[\]^_`{|}~\n"
     data = corpus.copy()
     for i in symbols:
         data = np.char.replace(data, i, ' ')
     np.char.replace(data, "'", "")
-    return np.array(data)
+    return list(np.array(data))
 
 
 def remove_stopwords(corpus):
+    if not isinstance(corpus, list):
+        print("corpus needs to be a list of strings")
+        return
+    if not isinstance(corpus[0], str):
+        print("corpus needs to be a list of strings")
+        return
     stop_words = set(stopwords.words('english'))
     res = []
     for x in corpus:
@@ -177,4 +229,4 @@ def remove_stopwords(corpus):
             if word not in stop_words:
                 new_text = new_text + " " + word
         res.append(new_text)
-    return np.array(res)
+    return list(np.array(res))

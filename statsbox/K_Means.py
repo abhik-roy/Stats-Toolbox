@@ -12,7 +12,16 @@ def dist(a, b):
 
 def init_centroids(k, X):
 
+    if not isinstance(k, int):
+        print("incorrect value of k")
+        return
+
     number_of_samples = X.shape[0]
+
+    if (k > number_of_samples):
+        print("incorrect value of k")
+        return
+
     sample_points_ids = random.sample(range(0, number_of_samples), k)
 
     centroids = [tuple(X[id]) for id in sample_points_ids]
@@ -60,13 +69,13 @@ def measure_change(cg_prev, cg_new):
     return res
 
 
-def cluster(k, X):
+def cluster(k, X, update_thresh=0.000001):
+
     cg_prev = init_centroids(k, X)
     cluster = [0]*len(X)
     cg_change = 100
-    while cg_change > .001:
+    while cg_change > update_thresh:
         cluster = assign_cluster(k, X, cg_prev)
-
         cg_new = compute_centroids(k, X, cluster)
         cg_change = measure_change(cg_new, cg_prev)
         cg_prev = cg_new
@@ -74,6 +83,16 @@ def cluster(k, X):
 
 
 def predict(centroids, X_test):
+    if not isinstance(X_test, list):
+        print("incorrect input for X_test, must be a list")
+        return
+    if not isinstance(centroids, list):
+        print("incorrect input for centroids, must be a list")
+        return
+    if len(centroids) < 1 or len(X_test) < 1:
+        print("input valid centroids and test data")
+        return
+
     distarray = []
     for i in range(len(centroids)):
         distarray.append(dist(X_test, centroids[i]))
@@ -113,7 +132,7 @@ def PCA(X, n_components):
     return X_reduced
 
 
-def plot_clusters(clusters, X, dims=2):
+def plot_clusters(clusters, X):
 
     dim1 = []
     dim2 = []
