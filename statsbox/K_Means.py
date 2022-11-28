@@ -78,3 +78,55 @@ def predict(centroids, X_test):
     for i in range(len(centroids)):
         distarray.append(dist(X_test, centroids[i]))
     return np.argmin(distarray)
+
+
+def calculate_WSS(points, kmax):
+    sse = []
+    for k in range(1, kmax+1):
+        pred_clusters, centroids = cluster(k, points)
+        #centroids = kmeans.cluster_centers_
+        #pred_clusters = kmeans.predict(points)
+        curr_sse = 0
+        for i in range(len(points)):
+            curr_center = centroids[pred_clusters[i]]
+            curr_sse += (points[i, 0] - curr_center[0]) ** 2 + \
+                (points[i, 1] - curr_center[1]) ** 2
+
+        sse.append(curr_sse)
+    return sse
+
+
+def plot_elbow(X, k):
+    plt.plot(calculate_WSS(X, k))
+
+
+def PCA(X, n_components):
+    cov_mat = np.cov(X, rowvar=False)
+    eigen_values, eigen_vectors = np.linalg.eigh(cov_mat)
+    sorted_index = np.argsort(eigen_values)[::-1]
+    sorted_eigenvalue = eigen_values[sorted_index]
+    sorted_eigenvectors = eigen_vectors[:, sorted_index]
+    # you can select any number of components.
+    eigenvector_subset = sorted_eigenvectors[:, 0:n_components]
+    X_reduced = np.dot(eigenvector_subset.transpose(),
+                       X.transpose()).transpose()
+    return X_reduced
+
+
+def plot_clusters(clusters, X, dims=2):
+
+    dim1 = []
+    dim2 = []
+
+    X_reduced = PCA(X, 2)
+
+    for x in X_reduced:
+        dim1.append(x[0])
+        dim2.append(x[1])
+
+    for i in range(len(X_reduced)):
+        colors = ['y', 'c', 'm', 'r', 'b', 'g', ]
+        idx = clusters[i]
+        color = colors[idx]
+        plt.plot(dim1[i], dim2[i], marker="o",
+                 markeredgecolor=color, markerfacecolor=color)

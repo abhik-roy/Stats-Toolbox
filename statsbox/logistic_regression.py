@@ -10,10 +10,9 @@ class LogisticRegression():
     def gradients(self, X, y, y_hat):
         n = X.shape[0]
         dw = (1/n)*np.dot(X.T, (y_hat - y))
-        db = (1/n)*np.sum((y_hat - y)) 
-        
-        return dw, db
+        db = (1/n)*np.sum((y_hat - y))
 
+        return dw, db
 
     def sigmoid(self, z):
         return 1.0/(1 + np.exp(-z))
@@ -36,20 +35,20 @@ class LogisticRegression():
         self.weights = np.zeros((X.shape[1], 1))
         losses = []
 
-        for epoch in range(0,epochs):
+        for epoch in range(0, epochs):
             for i in range((n-1)//batchsize + 1):
                 first_idx = i*batchsize
                 last_idx = first_idx + batchsize
                 xb, yb = X[first_idx:last_idx], y[first_idx:last_idx]
                 y_hat = self.h(xb)
-                dw, db = self.gradients(xb, yb, y_hat) # yhat is nan
-                self.weights = self.weights - lr*dw   
+                dw, db = self.gradients(xb, yb, y_hat)  # yhat is nan
+                self.weights = self.weights - lr*dw
                 self.bias = self.bias - lr*db
-  
+
             l = self.get_cost(X, y)
             losses.append(l)
-    
-    def predict(self, X, y):
+
+    def predict(self, X):
         preds = self.h(X)
         pred_class = [1 if i > 0.5 else 0 for i in preds]
         return np.array(pred_class)
@@ -57,4 +56,3 @@ class LogisticRegression():
     def accuracy(self, actual, predicted):
         accuracy = np.sum(actual[0] == predicted) / len(actual)
         return accuracy
-
