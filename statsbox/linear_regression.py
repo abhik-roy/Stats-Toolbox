@@ -42,6 +42,15 @@ class LinearRegression():
     return costs 
  
   def fit(self, X, y, useAdagrad=False, lr=0.1, epochs=10):
+    
+    if not isinstance(X, np.ndarray):
+        print(X.type())
+        print("incorrect input for X_train, must be a list")
+        return
+    if not isinstance(y, np.ndarray):
+        print("incorrect input for y_train, must be a list")
+        return
+
     X = self.pad_1s_to_mx(X)
     self.weights = self.init_weights(X)
     costs = self.gradient_descent(X, y, useAdagrad, lr, epochs)
@@ -52,6 +61,13 @@ class LinearRegression():
 
 
   def predict(self, X):
+    
+    if not isinstance(X, np.ndarray):
+        print(X.type())
+        print("incorrect input for X_test, must be a list")
+        return
+       
+
     X = self.pad_1s_to_mx(X)
     return self.h(X)
 
