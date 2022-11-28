@@ -13,7 +13,8 @@ class LogisticRegression():
     def gradients(self, X, y, y_hat):
     
         n = X.shape[0]
-        dw = (1/n)*Utils.mxmult(Utils.transpose(self.X_train), (y_hat - y))
+        # print(self.X_train.shape)
+        dw = (1/n)*np.dot(X.T, (y_hat - y))
         db = (1/n)*np.sum((y_hat - y)) 
         
         return dw, db
@@ -23,7 +24,7 @@ class LogisticRegression():
         return 1.0/(1 + np.exp(-z))
 
     def h(self, x, beta, bias):
-        return self.sigmoid(Utils.mxmult(x, beta) + bias)
+        return self.sigmoid(np.dot(x, beta) + bias)
 
     def get_cost(self, weights, bias):
         n_rows =  (self.y_train.shape[0])
