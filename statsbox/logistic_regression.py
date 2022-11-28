@@ -1,19 +1,14 @@
 import numpy as np
 import pandas as pd
 
-from utils import Utils
 
 class LogisticRegression():
-    def __init__(self, X_train, X_test, y_train, y_test):
-        self.X_train = X_train
-        self.y_train = y_train
-        self.X_test = X_test
-        self.y_test = y_test
+    def __init__(self):
+        self.weights = []
+        self.bias = 0
 
     def gradients(self, X, y, y_hat):
-    
         n = X.shape[0]
-        # print(self.X_train.shape)
         dw = (1/n)*np.dot(X.T, (y_hat - y))
         db = (1/n)*np.sum((y_hat - y)) 
         
@@ -23,56 +18,43 @@ class LogisticRegression():
     def sigmoid(self, z):
         return 1.0/(1 + np.exp(-z))
 
-    def h(self, x, beta, bias):
-        return self.sigmoid(np.dot(x, beta) + bias)
+    def h(self, x):
+        return self.sigmoid(np.dot(x, self.weights) + self.bias)
 
-    def get_cost(self, weights, bias):
-        n_rows =  (self.y_train.shape[0])
-        # print(self.X_train.shape, weights.shape, bias,"aeee")
-        h_x = self.h(self.X_train, weights, bias)
-        # print("hx", (self.X_train))
-        cost = -(self.y_train*(np.log(h_x)) - (1-self.y_train)*np.log(1-h_x))/n_rows
+    def get_cost(self, X, y):
+        n_rows = y.shape[0]
+        h_x = self.h(X)
+        cost = -(y*(np.log(h_x)) - (1-y)*np.log(1-h_x))/n_rows
         return cost
 
     def accuracy(y, y_hat):
         accuracy = np.sum(y == y_hat) / len(y)
         return accuracy
 
-    def fit(self, lr=0.1, epochs=10, batchsize=100):
-        n = self.X_train.shape[0]
-        w = np.zeros((self.X_train.shape[1], 1))
-       
-        b =  0
+    def fit(self, X, y, lr=0.1, epochs=10, batchsize=100):
+        n = X.shape[0]
+        self.weights = np.zeros((X.shape[1], 1))
         losses = []
 
         for epoch in range(0,epochs):
             for i in range((n-1)//batchsize + 1):
                 first_idx = i*batchsize
                 last_idx = first_idx + batchsize
-                xb, yb = self.X_train[first_idx:last_idx], self.y_train[first_idx:last_idx]
-                y_hat = self.h(xb, w, b)
+                xb, yb = X[first_idx:last_idx], y[first_idx:last_idx]
+                y_hat = self.h(xb)
                 dw, db = self.gradients(xb, yb, y_hat) # yhat is nan
-                w = w - lr*dw   
-                b = b - lr*db
+                self.weights = self.weights - lr*dw   
+                self.bias = self.bias - lr*db
   
-            l = self.get_cost(w, b)
+            l = self.get_cost(X, y)
             losses.append(l)
-            
-
-        return w, b, losses
     
-    def predict(self, w, b):
-        preds = self.h(self.X_test, w, b)
+    def predict(self, X, y):
+        preds = self.h(X)
         pred_class = [1 if i > 0.5 else 0 for i in preds]
-        
         return np.array(pred_class)
 
-    def accuracy(self, predicted):
-        accuracy = np.sum(self.y_test[0] == predicted) / len(self.y_test)
+    def accuracy(self, actual, predicted):
+        accuracy = np.sum(actual[0] == predicted) / len(actual)
         return accuracy
 
-
-def handle_nulls(df):
-    for col in df:
-        col_median=df[col].median()
-        df[col].fillna(col_median, inplace=True)

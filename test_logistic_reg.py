@@ -35,11 +35,11 @@ X = df.values
 from sklearn.model_selection import train_test_split
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.2, random_state=44)
 
-logregmodel = LogisticRegression(X_train, X_test, y_train, y_test)
+logregmodel = LogisticRegression()
 
-weights, bias, losses = logregmodel.fit(lr=0.01, epochs=100, batchsize=1000)
-y_pred = logregmodel.predict(weights, bias)
+logregmodel.fit(X_train, y_train, lr=0.01, epochs=100, batchsize=1000)
+y_pred = logregmodel.predict(X_test, y_test)
 
-print("Accuracy: ",logregmodel.accuracy(y_pred))
+print("Accuracy: ",logregmodel.accuracy(y_test, y_pred))
 
 run_sklearn_model()
