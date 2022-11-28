@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+from utils import Utils
 
 
 class LogisticRegression():
@@ -11,7 +12,6 @@ class LogisticRegression():
         n = X.shape[0]
         dw = (1/n)*np.dot(X.T, (y_hat - y))
         db = (1/n)*np.sum((y_hat - y))
-
         return dw, db
 
     def sigmoid(self, z):
@@ -30,8 +30,10 @@ class LogisticRegression():
         accuracy = np.sum(y == y_hat) / len(y)
         return accuracy
 
-    def fit(self, X, y, lr=0.1, epochs=10, batchsize=100):
+    def fit(self, X, y, useAdagrad=False, lr=0.1, epochs=10, batchsize=100):
         n = X.shape[0]
+        if useAdagrad:
+            adagradient = np.zeros((X.shape[1], 1))
         self.weights = np.zeros((X.shape[1], 1))
         losses = []
 
@@ -41,8 +43,12 @@ class LogisticRegression():
                 last_idx = first_idx + batchsize
                 xb, yb = X[first_idx:last_idx], y[first_idx:last_idx]
                 y_hat = self.h(xb)
-                dw, db = self.gradients(xb, yb, y_hat)  # yhat is nan
-                self.weights = self.weights - lr*dw
+                dw, db = self.gradients(xb, yb, y_hat)
+                if(not useAdagrad):
+                    self.weights = self.weights - lr*dw   
+                else:
+                    step, adagradient = Utils.adagrad(lr, dw, adagradient)
+                    self.weights = self.weights - step
                 self.bias = self.bias - lr*db
 
             l = self.get_cost(X, y)
@@ -54,5 +60,6 @@ class LogisticRegression():
         return np.array(pred_class)
 
     def accuracy(self, actual, predicted):
-        accuracy = np.sum(actual[0] == predicted) / len(actual)
+        predicted = predicted.reshape(actual.shape[0],1)
+        accuracy = np.sum(actual == predicted) / len(actual)
         return accuracy
