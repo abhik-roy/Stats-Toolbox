@@ -21,7 +21,7 @@ def entropy(y):
     return entropy
 
 
-def gini_index(self, y):
+def gini_index(y):
     class_labels = np.unique(y)
     gini = 0
     for cls in class_labels:
@@ -45,7 +45,7 @@ def information_gain(parent, l_child, r_child, mode='entropy'):
 
 
 class DecisionTreeClassifier():
-    def __init__(self, min_samples_split=9, max_depth=11):
+    def __init__(self, min_samples_split=3, max_depth=15):
 
         self.root = None
 
@@ -61,7 +61,7 @@ class DecisionTreeClassifier():
         max_val = max(Y, key=Y.count)
         return max_val
 
-    def get_best_split(self, dataset, num_samples, num_features):
+    def get_best_split(self, dataset, num_samples, num_features, mode='entropy'):
         # save the feature threshold and left and right data
         # for the best split so it can be easily used by the
         # the main program which calls this subroutine
@@ -79,7 +79,7 @@ class DecisionTreeClassifier():
                 if len(dataset_left) > 0 and len(dataset_right) > 0:
                     y, left_y, right_y = dataset[:, -
                                                  1], dataset_left[:, -1], dataset_right[:, -1]
-                    curr_info_gain = information_gain(y, left_y, right_y)
+                    curr_info_gain = information_gain(y, left_y, right_y, mode)
                     if curr_info_gain > max_info_gain:
                         best_split["feature_index"] = feature_index
                         best_split["threshold"] = threshold
@@ -91,7 +91,7 @@ class DecisionTreeClassifier():
 
     # recursive tree building function that saves the tree as a
     # serialized pickle object
-    def build_tree(self, dataset, curr_depth=0):
+    def build_tree(self, dataset, curr_depth=0, mode='entropy'):
         X, Y = dataset[:, :-1], dataset[:, -1]
         num_samples, num_features = np.shape(X)
         vals, counts = np.unique(Y, return_counts=True)
@@ -109,7 +109,7 @@ class DecisionTreeClassifier():
         else:
             # find the best split
             best_split = self.get_best_split(
-                dataset, num_samples, num_features)
+                dataset, num_samples, num_features, mode)
             # check if information is actually gained
             if best_split["info_gain"] > 0:
                 subtree1 = self.build_tree(
@@ -139,8 +139,8 @@ class DecisionTreeClassifier():
         else:
             return self.make_prediction(x, node.right)
 
-    def fit(self, X, Y):
+    def fit(self, X, Y, mode='entropy'):
         ''' function to train the tree '''
 
         dataset = np.concatenate((X, Y), axis=1)
-        self.root = self.build_tree(dataset)
+        self.root = self.build_tree(dataset, 0, mode)

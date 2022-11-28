@@ -1,4 +1,4 @@
-import TF_tools as tfidf
+from statsbox import TF_tools as tfidf
 import pandas as pd
 df = pd.read_csv("../Amazon-data.csv")
 sentences = df['reviews.text']
