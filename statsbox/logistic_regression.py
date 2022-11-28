@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+from utils import Utils
 
 
 class LogisticRegression():
@@ -12,12 +13,6 @@ class LogisticRegression():
         dw = (1/n)*np.dot(X.T, (y_hat - y))
         db = (1/n)*np.sum((y_hat - y))
         return dw, db
-
-    def adagrad(self, lr, dw, adagradient):
-        adagradient += dw**2
-        step = lr / (np.sqrt(adagradient + 1e-6)) * dw
-        return step, adagradient
-
 
     def sigmoid(self, z):
         return 1.0/(1 + np.exp(-z))
@@ -52,7 +47,7 @@ class LogisticRegression():
                 if(not useAdagrad):
                     self.weights = self.weights - lr*dw   
                 else:
-                    step, adagradient = self.adagrad(lr, dw, adagradient)
+                    step, adagradient = Utils.adagrad(lr, dw, adagradient)
                     self.weights = self.weights - step
                 self.bias = self.bias - lr*db
 
